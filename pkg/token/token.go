@@ -37,6 +37,8 @@ type tokenResponse struct {
 func Authenticate(req []byte) ([]byte, error) {
 	ds := u2fhost.Devices()
 
+	fmt.Println("Device count: ", len(ds))
+
 	ch := make(chan tokenResponse)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -47,6 +49,8 @@ func Authenticate(req []byte) ([]byte, error) {
 	if err := json.Unmarshal(req, &areq); err != nil {
 		return nil, err
 	}
+	
+	fmt.Println("Request: ", string(req))
 
 	for _, d := range ds {
 		go authenticateWait(ctx, d, areq, ch)
@@ -54,6 +58,13 @@ func Authenticate(req []byte) ([]byte, error) {
 
 	for range ds {
 		res := <-ch
+
+		if (res.Response != nil) {
+			fmt.Println("Response: ", res.Response.AuthenticatorData, res.Response.ClientData, res.Response.KeyHandle, res.Response.SignatureData)
+		}
+		if (res.Error != nil) {
+			fmt.Println("Response Error: ", res.Error.Error())
+		}
 
 		if res.Error != nil {
 			return nil, res.Error
@@ -127,6 +138,14 @@ func authenticateDevice(ctx context.Context, d *u2fhost.HidDevice, req authentic
 				refresh <- true
 
 				ares, err := d.Authenticate(areq)
+
+				if err != nil {
+					fmt.Println("Authenticating and got error: ", err.Error())
+				}
+				if ares != nil {
+					fmt.Println("Authenticating with ", d, "and got: ", ares.AuthenticatorData, ares.ClientData, ares.KeyHandle, ares.SignatureData)
+				}
+				
 				switch err.(type) {
 				case *u2fhost.BadKeyHandleError:
 				case *u2fhost.TestOfUserPresenceRequiredError:
