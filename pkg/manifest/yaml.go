@@ -265,8 +265,8 @@ func (v *ServiceHealth) UnmarshalYAML(unmarshal func(interface{}) error) error {
 			v.Timeout = w
 		}
 		if w, ok := t["method"].(string); ok {
-                        v.Method = w
-                }
+			v.Method = w
+		}
 	case string:
 		v.Path = t
 	default:
