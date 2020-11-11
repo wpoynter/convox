@@ -149,6 +149,10 @@ func (m *Manifest) ApplyDefaults() error {
 			m.Services[i].Health.Timeout = m.Services[i].Health.Interval - 1
 		}
 
+		if s.Health.Method == "" {
+			m.Services[i].Health.Method = "http"
+		}
+
 		if !m.AttributeExists(fmt.Sprintf("services.%s.init", s.Name)) {
 			m.Services[i].Init = true
 		}

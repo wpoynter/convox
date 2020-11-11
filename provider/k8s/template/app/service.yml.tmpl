@@ -101,10 +101,16 @@ spec:
         imagePullPolicy: IfNotPresent
         {{ with .Service.Port.Port }}
         readinessProbe:
+          {{ if eq .Service.Health.Method "http" }}
           httpGet:
             path: "{{$.Service.Health.Path}}"
             port: {{.}}
             scheme: "{{ upper $.Service.Port.Scheme }}"
+          {{ end }}
+          {{ if eq .Service.Health.Method "tcp" }}
+          tcpSocket:
+            port: {{.}}
+          {{ end }}
           initialDelaySeconds: {{$.Service.Health.Grace}}
           periodSeconds: {{$.Service.Health.Interval}}
           timeoutSeconds: {{$.Service.Health.Timeout}}

@@ -59,6 +59,7 @@ type ServiceHealth struct {
 	Interval int
 	Path     string
 	Timeout  int
+	Method   string
 }
 
 type ServicePortProtocol struct {
