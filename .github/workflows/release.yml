@@ -37,13 +37,13 @@ jobs:
       run: make -C cmd/convox build
     - name: build
       run: docker build -t convox/convox:${VERSION} .
-    - name: login
-      run: docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}"
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-    - name: push
-      run: docker push convox/convox:${VERSION}
+    # - name: login
+    #   run: docker login --username "${DOCKER_USERNAME}" --password "${DOCKER_PASSWORD}"
+    #   env:
+    #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+    #     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    # - name: push
+    #   run: docker push convox/convox:${VERSION}
     - name: release-cli-linux
       uses: actions/upload-release-asset@v1.0.1
       env:
